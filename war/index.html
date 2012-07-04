@@ -1,0 +1,134 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta name="viewport" content="user-scalable=no,width=device-width" />
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<link rel="stylesheet" href="css/jquery.mobile-1.1.0.min.css" />
+<link rel="stylesheet" href="css/transports-rouen.css" />
+<script src="js/jquery-1.7.2.min.js"></script>
+<script src="js/calcul-distance.js"></script>
+
+
+<script>
+	var myData;
+	function refreshListStation(latitude, longitude) {
+		var currentPosition;
+		if (typeof(latitude) != 'undefined') {
+			currentPosition = new LatLon(latitude, longitude);
+		}
+		var output = '';
+		$('#listStations').text('');
+		$.each(myData, function(index, value) {
+			total = value.free + value.available;
+			pourcentage = value.free / total;
+			output += '<li data-id=' + value.id + ' class="has-thumb-less-padding">';
+			output += '<div class="ui-li-thumb compteur-stations ';
+			if (pourcentage < .25) {
+				output += 'compteur-stations-red';
+			} else if (pourcentage < .5) {
+				output += 'compteur-stations-orange';
+			} else {
+				output += 'compteur-stations-green';
+			}
+			output += '"><span>';
+			output += value.free + '/' + total;
+			output += '</span></div>';
+			output += '<h1 class="has-thumb-less-padding">' + value.name + '</h1>';
+			//<span class=ui-li-count>TODO distance</span>
+			if (typeof(currentPosition) != 'undefined') {
+				var point = new LatLon(value.latitude, value.longitude);
+				var dist = currentPosition.distanceTo(point);
+				var distChaine;
+				if (dist < 1.) {
+					dist = dist * 1000;
+					distChaine = dist + 'm';
+				} else {
+					distChaine = dist + 'km';
+				}
+				output += '<span class="ui-li-count">' + distChaine + '</span';
+			}
+			output += '</li>';
+		});
+
+		$('#listStations').append(output).listview('refresh');
+	}
+	$('#stations').live(
+			'pagecreate',
+			function(event) {
+
+				//$(".ui-loader").css({ "top": "252px !important" });
+				$.ajax({
+					url : '/services/getall',
+					success : function(data) {
+						myData = data;
+						refreshListStation();
+						navigator.geolocation.getCurrentPosition (function (pos)
+						{
+							var lat = pos.coords.latitude;
+							var lng = pos.coords.longitude;
+							refreshListStation(lat, lng);
+						});
+					},
+					beforeSend : function(XMLHttpRequest) {
+						$('body').addClass('ui-loading');
+					},
+					complete : function(XMLHttpRequest, textStatus) {
+						$('body').removeClass('ui-loading');
+					},
+					error : function(xmlHttpRequest, status, err) {
+						$('body').removeClass('ui-loading');
+					}
+				});
+			});
+</script>
+
+<script src="js/jquery.mobile-1.1.0.min.js"></script>
+</head>
+
+<body>
+
+	<div data-role=page id=home>
+		<div data-role=header>
+			<h1>Transports Rouen</h1>
+		</div>
+
+		<div data-role=content>
+			<p>Hello Rouen</p>
+			<a href=#stations data-transition=flip>Accès aux stations</a>
+		</div>
+	</div>
+
+	<div data-role=page id=stations>
+		<div data-role=header>
+			<div data-role=navbar>
+				<ul>
+					<li><a href=#stations class=ui-btn-active>Stations</a></li>
+					<li><a href=#carte>Carte</a></li>
+				</ul>
+			</div>
+		</div>
+
+		<div data-role=content>
+			<h3>Liste des stations</h3>
+			<ul data-role=listview data-filter=true data-inset=true
+				id=listStations>
+			</ul>
+		</div>
+	</div>
+
+	<div data-role=page id=carte>
+
+		<div data-role=header>
+			<div data-role=navbar>
+				<ul>
+					<li><a href=#stations>Stations</a></li>
+					<li><a href=#carte class=ui-btn-active>Carte</a></li>
+				</ul>
+			</div>
+		</div>
+
+		<div data-role=content></div>
+	</div>
+
+</body>
+</html>

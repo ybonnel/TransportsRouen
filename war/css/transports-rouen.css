@@ -1,0 +1,27 @@
+.compteur-stations {
+	text-align:center;
+	font-size:16px;
+	height:60px;
+	width:60px;
+	margin:10px;
+}
+
+.compteur-stations-green {
+	background-color:green;
+} 
+.compteur-stations-red {
+	background-color:red;
+} 
+.compteur-stations-orange {
+	background-color:orange;
+}
+
+.has-thumb-less-padding {
+	min-height:60px;
+	padding-left:70px;
+}
+
+.compteur-stations span {
+	position:relative;
+	top:22px;
+}
