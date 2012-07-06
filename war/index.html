@@ -15,6 +15,17 @@
 		var currentPosition;
 		if (typeof(latitude) != 'undefined') {
 			currentPosition = new LatLon(latitude, longitude);
+			$.each(myData, function(index, value) {
+				var point = new LatLon(value.latitude, value.longitude);
+				value.distance = currentPosition.distanceTo(point);
+			});
+			myData.sort(function(a, b) {
+				return a.distance - b.distance;
+			});
+		} else {
+			myData.sort(function(a, b) {
+				return a.number - b.number;
+			});
 		}
 		var output = '';
 		$('#listStations').text('');
@@ -34,16 +45,13 @@
 			output += value.free + '/' + total;
 			output += '</span></div>';
 			output += '<h1 class="has-thumb-less-padding">' + value.name + '</h1>';
-			//<span class=ui-li-count>TODO distance</span>
-			if (typeof(currentPosition) != 'undefined') {
-				var point = new LatLon(value.latitude, value.longitude);
-				var dist = currentPosition.distanceTo(point);
+			if (value.distance != 'undefined') {
 				var distChaine;
-				if (dist < 1.) {
-					dist = dist * 1000;
-					distChaine = dist + 'm';
+				if (value.distance < 1.) {
+					value.distance = value.distance * 1000;
+					distChaine = value.distance + 'm';
 				} else {
-					distChaine = dist + 'km';
+					distChaine = value.distance + 'km';
 				}
 				output += '<span class="ui-li-count">' + distChaine + '</span';
 			}
