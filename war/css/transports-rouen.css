@@ -4,6 +4,8 @@
 	height:60px;
 	width:60px;
 	margin:10px;
+	-webkit-box-shadow:10px 10px 15px grey;
+	-webkit-border-radius:10px;
 }
 
 .compteur-stations-green {
@@ -24,4 +26,10 @@
 .compteur-stations span {
 	position:relative;
 	top:22px;
+	color:white;
+	text-shadow:0 0px 0;
+}
+
+h4.ui-li-heading {
+	font-size:14px;
 }
