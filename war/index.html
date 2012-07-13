@@ -17,7 +17,7 @@
 		var theme = "c";
 	
 	    // Navigation
-	    $.mobile.page.prototype.options.backBtnText = "Go back";
+	    //$.mobile.page.prototype.options.backBtnText = "Go back";
 	    $.mobile.page.prototype.options.addBackBtn      = false;
 	    $.mobile.page.prototype.options.backBtnTheme    = theme;
 	
@@ -205,18 +205,7 @@
 
 <body>
 
-	<div data-role=page id=home>
-		<div data-role=header>
-			<h1>Transports Rouen</h1>
-		</div>
-
-		<div data-role=content >
-			<p>Hello Rouen</p>
-			<a href=#stations data-transition=flip>Accès aux stations</a>
-		</div>
-	</div>
-
-	<div data-role=page id=stations >
+	<div data-role=page id=stations>
 		<div data-role=header data-position=fixed data-id=onglets>
 			<div data-role=navbar>
 				<ul>
