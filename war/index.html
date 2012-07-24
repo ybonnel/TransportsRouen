@@ -151,12 +151,8 @@
 		var positionMarker = new google.maps.LatLng(value.latitude, value.longitude);
 		var total = value.free + value.available;
 		var pourcentage = value.free / total;
-		var contentString = '<div id="content"><div id="siteNotice"/>'
-				+ '<h2 id="firstHeading" class="firstHeading">'
-				+ value.name + '</h2>'
-				+ '<div id="bodyContent"><p>'
-				+ value.free + '/' + total + '</p>'
-				+ '</div></div>';
+		var contentString = value.name + '<br/>'
+				+ value.free + '/' + total;
 		var infowindow = new google.maps.InfoWindow({
 		    content: contentString
 		});
