@@ -1,0 +1,3 @@
+User-Agent: *
+Disallow: /cron/
+Disallow: /services/
