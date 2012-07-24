@@ -26,6 +26,7 @@ import com.googlecode.objectify.util.DAOBase;
 public class ObjectifyDao extends DAOBase {
 	static {
 		ObjectifyService.register(Station.class);
+		ObjectifyService.register(HistoriqueStation.class);
 	}
 
 }

@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -31,6 +32,8 @@ import javax.xml.parsers.SAXParserFactory;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.common.base.Throwables;
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.annotation.NotSaved;
 
 import fr.ybo.transportsrouen.server.sax.CyclicHandler;
 import fr.ybo.transportsrouen.server.sax.StationHandler;
@@ -198,6 +201,9 @@ public class Station implements Serializable {
 		logger.info("Store de " + station.toString());
 		ObjectifyDao dao = new ObjectifyDao();
 		dao.ofy().put(station);
+		if (station.historique != null) {
+			HistoriqueStation.store(station.historique);
+		}
 	}
 
 	public static void resetCache(List<Station> stations) {
@@ -220,6 +226,9 @@ public class Station implements Serializable {
 		return stations;
 	}
 
+	@NotSaved
+	private transient HistoriqueStation historique = null;
+
 	public boolean merge(Station station) {
 		boolean isMerged = false;
 		if (!station.getName().equals(name)) {
@@ -238,13 +247,23 @@ public class Station implements Serializable {
 			isMerged = true;
 			longitude = station.getLongitude();
 		}
+		int oldAvailable = available;
+		int oldFree = free;
 		if (available != station.getAvailable()) {
+			historique = new HistoriqueStation();
 			isMerged = true;
 			available = station.getAvailable();
 		}
 		if (free != station.getFree()) {
 			isMerged = true;
 			free = station.getFree();
+		}
+		if (isMerged) {
+			historique = new HistoriqueStation();
+			historique.setAvailable(oldAvailable);
+			historique.setFree(oldFree);
+			historique.setDateHisto(new Date());
+			historique.setStation(new Key<Station>(Station.class, id));
 		}
 		return isMerged;
 	}
