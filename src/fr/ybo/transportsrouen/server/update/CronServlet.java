@@ -49,19 +49,24 @@ public class CronServlet extends HttpServlet {
 				stationsFromDb.put(stationFromDb.getNumber(), stationFromDb);
 			}
 			Station stationFromDb;
+			boolean cacheHaveToBeUpdated = false;
 			for (Station station : Station.getStationsFromApi()) {
 				stationFromDb = stationsFromDb.get(station.getNumber());
 				if (stationFromDb == null) {
 					stationFromDb = station;
 					Station.store(stationFromDb);
+					cacheHaveToBeUpdated = true;
 					stationsFromDb.put(stationFromDb.getNumber(), stationFromDb);
 				} else {
 					if (stationFromDb.merge(station)) {
 						Station.store(stationFromDb);
+						cacheHaveToBeUpdated = true;
 					}
 				}
 			}
-			Station.resetCache(new ArrayList<Station>(stationsFromDb.values()));
+			if (cacheHaveToBeUpdated) {
+				Station.resetCache(new ArrayList<Station>(stationsFromDb.values()));
+			}
 		} catch (Exception exception) {
 			logger.log(Level.SEVERE, "Erreur durant CronServlet", exception);
 		}

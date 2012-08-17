@@ -16,8 +16,12 @@
  */
 package fr.ybo.transportsrouen.server.services;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
+import fr.ybo.transportsrouen.server.modele.HistoriqueStation;
 import fr.ybo.transportsrouen.server.modele.Station;
 
 /**
@@ -37,6 +41,24 @@ public class TransportsRouenService {
 			}
 		}
 		return null;
+	}
+
+	public static List<HistoriqueStation> gethistostation(int number) {
+		Station station = getstation(number);
+		List<HistoriqueStation> historiqueStations = HistoriqueStation.retreive(station);
+		Collections.sort(historiqueStations, new Comparator<HistoriqueStation>() {
+
+			@Override
+			public int compare(HistoriqueStation o1, HistoriqueStation o2) {
+				return o1.getDateHisto().compareTo(o2.getDateHisto());
+			}
+		});
+		HistoriqueStation histo = new HistoriqueStation();
+		histo.setDateHisto(new Date());
+		histo.setAvailable(station.getAvailable());
+		histo.setFree(station.getFree());
+		historiqueStations.add(histo);
+		return historiqueStations;
 	}
 
 }
